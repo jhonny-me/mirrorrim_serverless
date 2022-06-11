@@ -1,21 +1,21 @@
 {
-  "name": "sls-demo-msn-todo",
+  "name": "mirrorrim-tencent",
   "version": "1.0.0",
-  "description": "Serverless Todo Demo",
+  "description": "Serverless Mirrorrim Tencent Doc",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ole3021/sls-demo-msn-todo.git"
+    "url": "git+https://github.com/jhonny-me/mirrorrim_serverless.git"
   },
-  "author": "Oliver.W",
-  "license": "ISC",
+  "author": "Johnny.Gu",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ole3021/sls-demo-msn-todo/issues"
+    "url": "https://github.com/jhonny-me/mirrorrim_serverless/issues"
   },
-  "homepage": "https://github.com/ole3021/sls-demo-msn-todo#readme",
+  "homepage": "https://github.com/jhonny-me/mirrorrim_serverless#readme",
   "dependencies": {
     "pg": "^8.6.0"
   }

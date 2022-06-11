@@ -15,11 +15,12 @@ const initDB = async () => {
     await client.connect();
 
     await client.query(`
-    CREATE TABLE IF NOT EXISTS todo (
+    CREATE TABLE IF NOT EXISTS user (
       ID              SERIAL          NOT NULL,
-      TITLE           VARCHAR         NOT NULL,
-      NOTE            TEXT,
-      IS_COMPLETE     BOOLEAN         DEFAULT FALSE
+      "access_token"  VARCHAR         NOT NULL,
+      "refresh_token" VARCHAR         NOT NULL,
+      "user_id"       VARCHAR         NOT NULL,
+      "expires_at"    TIMESTAMP       NOT NULL
     );`);
   }
 };
@@ -32,7 +33,7 @@ exports.all = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   await initDB();
 
-  const { rows } = await client.query({ text: "SELECT * FROM todo" });
+  const { rows } = await client.query({ text: "SELECT * FROM user" });
 
   return {
     message: "Tencent SCF execute successful!",
@@ -56,7 +57,7 @@ exports.add = async (event, context) => {
 
   await initDB();
   const { rowCount } = await client.query({
-    text: "INSERT INTO todo (title, note) VALUES($1, $2)",
+    text: "INSERT INTO user (title, note) VALUES($1, $2)",
     values: [title, note],
   });
 
@@ -88,7 +89,7 @@ exports.comp = async (event, context) => {
 
   await initDB();
   const { rowCount } = await client.query({
-    text: "UPDATE todo SET is_complete = true WHERE id=$1",
+    text: "UPDATE user SET is_complete = true WHERE id=$1",
     values: [todoId],
   });
 

@@ -1,5 +1,5 @@
 component: multi-scf
-name: sls-demo-msn
+name: mirrorrim-tencent
 
 inputs:
   src:
@@ -9,13 +9,13 @@ inputs:
       - "node_modules/**"
   environments:
     - key: PG_CONNECT_STRING
-      value: ${output:${stage}:${app}:sls-demo-msn-DB.private.connectionString}
-  region: ap-guangzhou
+      value: ${output:${stage}:${app}:mirrorrim-tencent-DB.private.connectionString}
+  region: ap-shanghai
   runtime: Nodejs12.16
   memorySize: 128
   vpc:
-    vpcId: ${output:${stage}:${app}:sls-demo-msn-vpc.vpcId} # 私有网络Id
-    subnetId: ${output:${stage}:${app}:sls-demo-msn-vpc.subnetId} # 子网Id
+    vpcId: ${output:${stage}:${app}:mirrorrim-tencent-vpc.vpcId} # 私有网络Id
+    subnetId: ${output:${stage}:${app}:mirrorrim-tencent-vpc.subnetId} # 子网Id
   installDependency: true # 是否在线安装依赖
   timeout: 10
   functions:
@@ -25,7 +25,7 @@ inputs:
     addTodo:
       handler: todos.add
       timeout: 15
-    completeTodo:
+    complete:
       handler: todos.comp
       timeout: 15
   triggers:
@@ -46,7 +46,7 @@ inputs:
             function: addTodo
           - path: /todos/{id}/actions/complete
             method: POST
-            function: completeTodo
+            function: complete
             param:
               - name: id
                 position: PATH
