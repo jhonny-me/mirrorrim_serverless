@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jhonny-me/mirrorrim_serverless#readme",
   "dependencies": {
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "axios": "0.27.2"
   }
 }

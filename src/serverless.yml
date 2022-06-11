@@ -10,6 +10,12 @@ inputs:
   environments:
     - key: PG_CONNECT_STRING
       value: ${output:${stage}:${app}:mirrorrim-tencent-DB.private.connectionString}
+    - key: CLIENT_ID
+      value: ${env:CLIENT_ID}
+    - key: CLIENT_SECRET
+      value: ${env:CLIENT_SECRET}
+    - key: RSF_STATE
+      value: ${env:RSF_STATE}
   region: ap-shanghai
   runtime: Nodejs12.16
   memorySize: 128
@@ -19,37 +25,68 @@ inputs:
   installDependency: true # 是否在线安装依赖
   timeout: 10
   functions:
-    allTodo:
-      handler: todos.all
+    fire:
+      handler: mirrorrim.fire
       memorySize: 256
-    addTodo:
-      handler: todos.add
+    progress:
+      handler: mirrorrim.queryExportProgress
       timeout: 15
-    complete:
-      handler: todos.comp
+    export:
+      handler: mirrorrim.asyncExport
       timeout: 15
   triggers:
     - type: apigw
       parameters:
-        name: todosAPIGW
+        name: mirrorrimAPIGW
         protocols:
           - https
           - http
         apis:
-          - path: /todos/
+          - path: /fire
             method: GET
             # api 的 function 配置优先级高于外层 function
-            function: allTodo
-          - path: /todos/
-            method: POST
-            # api 的 function 配置优先级高于外层 function
-            function: addTodo
-          - path: /todos/{id}/actions/complete
-            method: POST
-            function: complete
+            function: fire
             param:
-              - name: id
-                position: PATH
+              - name: code
+                position: QUERY
                 required: true
-                type: number
-                desc: Todo ID
+                type: string
+                desc: code from OAuth
+              - name: state
+                position: QUERY
+                required: true
+                type: string
+                desc: state from OAuth
+          - path: /export
+            method: GET
+            function: export
+            param:
+              - name: token
+                position: QUERY
+                required: true
+                type: string
+                desc: user_id
+              - name: doc_id
+                position: QUERY
+                required: true
+                type: string
+                desc: id for requested tencent doc
+          - path: /progress
+            method: GET
+            function: export
+            param:
+              - name: token
+                position: QUERY
+                required: true
+                type: string
+                desc: user_id
+              - name: doc_id
+                position: QUERY
+                required: true
+                type: string
+                desc: id for requested tencent doc
+              - name: operation_id
+                position: QUERY
+                required: true
+                type: string
+                desc: operation_id for requested tencent doc
