@@ -17,23 +17,20 @@ inputs:
     - key: RSF_STATE
       value: ${env:RSF_STATE}
   region: ap-shanghai
-  runtime: Nodejs12.16
+  runtime: Nodejs14.18
   memorySize: 128
   vpc:
     vpcId: ${output:${stage}:${app}:mirrorrim-tencent-vpc.vpcId} # 私有网络Id
     subnetId: ${output:${stage}:${app}:mirrorrim-tencent-vpc.subnetId} # 子网Id
   installDependency: true # 是否在线安装依赖
-  timeout: 10
+  timeout: 20
   functions:
     fire:
       handler: mirrorrim.fire
-      memorySize: 256
     progress:
       handler: mirrorrim.queryExportProgress
-      timeout: 15
     export:
       handler: mirrorrim.asyncExport
-      timeout: 15
   triggers:
     - type: apigw
       parameters:

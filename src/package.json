@@ -2,7 +2,7 @@
   "name": "mirrorrim-tencent",
   "version": "1.0.0",
   "description": "Serverless Mirrorrim Tencent Doc",
-  "main": "index.js",
+  "main": "mirrorrim.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

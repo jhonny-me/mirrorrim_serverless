@@ -101,13 +101,20 @@ exports.fire = async (event, context) => {
   const { CLIENT_ID, CLIENT_SECRET } = process.env;
   const redirect_uri = encodeURI("https://service-2slh95tv-1301772291.sh.apigw.tencentcs.com/fire")
   const url = `https://docs.qq.com/oauth/v2/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&redirect_uri=${redirect_uri}&grant_type=authorization_code&code=${code}`
-  const user = await axios.get(url);
-  const result = await updateUserInDB(user);
+  try {
+    const user = await axios.get(url);
+    const result = await updateUserInDB(user);
+  } catch (error) {
+    return {
+      statusCode: 400,
+      message: error.toString(),
+    }
+  }
 
   return result 
     ? {
       statusCode: 201,
-      message: `Update your package.json with this token: ${user_id}`
+      message: `Update your package.json with this token: ${user.user_id}`
     } : {
       statusCode: 400,
       message: "Failed to login"
@@ -117,24 +124,31 @@ exports.fire = async (event, context) => {
 exports.queryExportProgress = async (event, context) => {
   // async 需要关闭事件循环等待，以避免日志记录超时或函数无返回的问题。
   context.callbackWaitsForEmptyEventLoop = false;
-  const { doc_id, operationID, token } = event.queryStringParameters;
+  const { doc_id, operation_id, token } = event.queryStringParameters;
 
-  const user = retriveUserInDB(token);
-  const { access_token, user_id } = renewTokenIfNecessary(user);
+  try {
+    const user = await retriveUserInDB(token);
+    const { access_token, user_id } = await renewTokenIfNecessary(user);
 
-  const url = `https://docs.qq.com/openapi/drive/v2/files/${doc_id}/export-progress?operationID=${operationID}`;
-  const { data } = await axios.get(url, {
-    headers: {
-      "Access-Token": access_token,
-      "Client-Id": process.env.CLIENT_ID,
-      "Open-Id": user_id,
+    const url = `https://docs.qq.com/openapi/drive/v2/files/${doc_id}/export-progress?operationID=${operation_id}`;
+    const { data } = await axios.get(url, {
+      headers: {
+        "Access-Token": access_token,
+        "Client-Id": process.env.CLIENT_ID,
+        "Open-Id": user_id,
+      }
+    });
+
+    return {
+      statusCode: 201,
+      data
+    };
+  } catch (error) {
+    return {
+      statusCode: 400,
+      message: error.toString(),
     }
-  });
-
-  return {
-    statusCode: 201,
-    data
-  };
+  }
 }
 
 // download tencent doc with doc Id and user_id
@@ -143,21 +157,29 @@ exports.asyncExport = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
   const { doc_id, token } = event.queryStringParameters;
 
-  const user = retriveUserInDB(token);
-  const { access_token, user_id } = renewTokenIfNecessary(user);
-  const url = `https://docs.qq.com/openapi/drive/v2/files/${doc_id}/async-export`;
-  const { data } = await axios.post(url, { exportType: "sheet" }, {
-    headers: {
-      "Access-Token": access_token,
-      "Client-Id": process.env.CLIENT_ID,
-      "Open-Id": user_id,
-      "Content-Type": "application/x-www-form-urlencoded",
-    }
-  });
+  try {
+    const user = await retriveUserInDB(token);
+    const { access_token, user_id } = await renewTokenIfNecessary(user);
+    const url = `https://docs.qq.com/openapi/drive/v2/files/${doc_id}/async-export`;
+    const { data } = await axios.post(url, { exportType: "sheet" }, {
+      headers: {
+        "Access-Token": access_token,
+        "Client-Id": process.env.CLIENT_ID,
+        "Open-Id": user_id,
+        "Content-Type": "application/x-www-form-urlencoded",
+      }
+    });
 
-  return {
-    statusCode: 200,
-    data
-  };
+    return {
+      statusCode: 200,
+      data
+    };
+  } catch (error) {
+    return {
+      statusCode: 400,
+      message: error.toString(),
+    }
+  }
+  
 }
 
