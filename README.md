@@ -1,31 +1,30 @@
-# Serverless Framework 示例 - 多函数 TODO 应用
+# Serverless Application that integrate with TencentDoc for [Mirrorrim](https://github.com/jhonny-me/mirrorrim/)
 
-## 简介
+## Diagram
 
-此项目是 Serverless Framework 的多函数组件`multi-scf`的使用示例，项目中使用了 PostgreSQL 和 多函数组件开发了一个简易的 Todo 应用。
+https://github.com/jhonny-me/mirrorrim/issues/37
 
-## 快速开始
+## How to start
 
-### 1. 安装 Serverless Framework
+### 1. Install Serverless Framework
 
 ```bash
  $ npm install -g serverless
 ```
 
-### 2. 部署应用
+### 2. Update app name at ./serverless.yml
 
-通过如下命令直接下载该例子：
+E.g.
+`mirrorrim-tencent-3e5a2134` => `mirrorrim-tencent-12345678`
+
+### 2. Deploy service
 
 ```bash
 $ serverless deploy
 ```
 
-### 3. 查看部署结果
-
-在 `serverless.yml` 文件所在的项目根目录，运行以下指令，将会弹出二维码，直接扫码授权进行部署：
+### 3. Review the deploy info
 
 ```bash
 $ serverless info
 ```
-
-<!-- 相关说明文章： -->
